@@ -115,8 +115,6 @@ def run_one_experiment(sample_size, linear, replicate, k, quan):
         Y_data = None
         for name, data in result.items():
             Y_data = data.values
-        Y_tensor = torch.tensor(Y_data, dtype=torch.float32)
-        # Standardize the targets
         Y_data = (Y_data - Y_data.mean()) / Y_data.std()
         Y_tensor = torch.tensor(Y_data, dtype=torch.float32)
     else:
@@ -131,33 +129,19 @@ def run_one_experiment(sample_size, linear, replicate, k, quan):
     for i_kn in range(args.Num_knock + 1):
         col_min = args.weight[i_kn].min().item()
         col_max = args.weight[i_kn].max().item()
-        args.weight[i_kn] = (args.weight[i_kn] - col_min) / (col_max - col_min)
-    
+        args.weight[i_kn] = (args.weight[i_kn] - col_min) / (col_max - col_min) 
     if quan:
-        if not linear:
-            args.weight_decay = 5e-2
-            args.dropout = 0.3  ##nonlinear quan 0.1 0.3
-            args.FILTER = 28  ##nonlinear quan 12 20
-            args.gate_init = 20 ##nonlinear quan 10 20
-            # args.l1_regularization = 0.000002
-            args.l1_regularization = 0.000002
-        else:
-            args.FILTER = 8
-            args.dropout = 0.1
-            args.weight_decay = 0.5
-            args.gate_init = 20
-            args.l1_regularization = 0.000002
+        args.weight_decay = 5e-2
+        args.dropout = 0.3
+        args.FILTER = 28 
+        args.gate_init = 20
+        args.l1_regularization = 0.000002
     else:
-        if not linear:
-            args.FILTER = 28   ####20
-            args.dropout = 0.3
-            args.weight_decay = 5e-2
-            args.gate_init = 20
-            args.l1_regularization = 0.000002
-        else:
-            args.weight_decay = 0.1
-            args.gate_init = 20
-            args.l1_regularization = 0.00002
+        args.FILTER = 28
+        args.dropout = 0.3
+        args.weight_decay = 5e-2
+        args.gate_init = 20
+        args.l1_regularization = 0.000002
     
     dataset = TensorDataset(X_tensor, Y_tensor)
     train_size = int(0.8 * len(dataset))
@@ -169,14 +153,10 @@ def run_one_experiment(sample_size, linear, replicate, k, quan):
 
     model = DNN(args).to(device)
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=args.weight_decay)
-    # optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=args.weight_decay)
     trainer = TrainerWithCallback(args, model, optimizer, device)
     trained_model, feature_importances = trainer.train(train_loader, test_loader, num_epochs=epoch, epoch_param_current=[epoch], alpha=alpha)
     df = pd.DataFrame(feature_importances.T)
     df.to_csv(f'{base_path}/FI_nn_final_gradient.csv', index=False, header=False)
-
-    # ------------------ SHAP 解释 ------------------
-    # 获取 train/test 的全部数据
     test_data = torch.cat([X_b for X_b, Y_b in test_loader], dim=0)
     dad_tensor = test_data[:, :, :, 0].float()
     mom_tensor = test_data[:, :, :, 1].float()
@@ -191,27 +171,13 @@ def run_one_experiment(sample_size, linear, replicate, k, quan):
 
     all_mean_tensor = torch.cat((mean_tensor_train, mean_tensor_test), dim=0)
     all_child_tensor = torch.cat((child_tensor_train, child_tensor_test), dim=0)
-
-    # 设置模型为只返回预测值（便于计算梯度）
     trained_model.return_y_only = True
     trained_model.eval()
     torch.cuda.empty_cache()
-
-    # combined_tensor = torch.cat((mean_tensor_train, mean_tensor_test, child_tensor_train, child_tensor_test), dim=0)
-    # model.return_y_only = True
-    # model.eval()
-    # n = combined_tensor.shape[0]
-    # background_data = combined_tensor[:n//2].to(device)
-    # explanation_data = combined_tensor[n//2:].to(device)    
-    # explainer = shap.GradientExplainer(model, background_data.to(device))
-    # shap_values = explainer.shap_values(explanation_data.to(device))
-    # feature_importances = np.abs(shap_values).mean(axis=0)
-    # df = pd.DataFrame(feature_importances.squeeze(2).T)
     all_mean_tensor = torch.cat((mean_tensor_train, mean_tensor_test), dim=0)
     all_child_tensor = torch.cat((child_tensor_train, child_tensor_test), dim=0)
     shap_values_list = []
     batch_size = all_child_tensor.shape[0]
-    print("开始按一一配对计算 SHAP 值...")
     for i in tqdm(range(0, all_child_tensor.shape[0], batch_size), desc="Batch SHAP"):
         batch_start = i
         batch_end = min(i + batch_size, all_child_tensor.shape[0])
@@ -224,7 +190,6 @@ def run_one_experiment(sample_size, linear, replicate, k, quan):
         shap_values_list.append(shap_val)
     shap_values_all = np.concatenate(shap_values_list, axis=0)
     mean_abs_shap = np.mean(np.abs(shap_values_all), axis=0)
-    # mean_abs_shap = np.mean(shap_values_all, axis=0)
     if mean_abs_shap.ndim > 2:
         mean_abs_shap = np.squeeze(mean_abs_shap, axis=-1)
     df = pd.DataFrame(mean_abs_shap.T)

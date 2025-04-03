@@ -20,9 +20,9 @@ import h5py
 linear = False
 quan = False
 if quan:
-    from callback_prediction_quan_combine import TrainerWithCallback
+    from function.callback_prediction_quan_combine import TrainerWithCallback
 else:
-    from callback_prediction_combine import TrainerWithCallback
+    from function.callback_prediction_combine import TrainerWithCallback
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 def init_seed(seed):
     torch.manual_seed(seed)
@@ -96,22 +96,17 @@ for k in range(args.Num_knock + 1):
     col_min = args.weight[k].min().item()
     col_max = args.weight[k].max().item()
     args.weight[k] = (args.weight[k] - col_min) / (col_max - col_min)
-    
-    
 args.weight_decay = 0.05
-args.dropout = 0.3  ##nonlinear quan 0.1
-args.FILTER = 4  ##nonlinear quan 12
-args.gate_init = 5 ##nonlinear quan 10
+args.dropout = 0.3
+args.FILTER = 4
+args.gate_init = 5 
 args.l1_regularization = 0.0000002
-
 dataset = TensorDataset(X_tensor, Y_tensor)
 train_size = int(0.8 * len(dataset))
 test_size = len(dataset) - train_size
 train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
-
 train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
-
 model = DNN(args).to(device)
 optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=args.weight_decay)
 trainer = TrainerWithCallback(args, model, optimizer, device)
@@ -119,34 +114,25 @@ trained_model, feature_importances = trainer.train(train_loader, test_loader, nu
 df = pd.DataFrame(feature_importances.T)
 df.to_csv('/home/yyang773/KONet-Trio/AGP_data/FI_gradient.csv', index=False, header=False)
 
-
-# # ------------------ SHAP 解释 ------------------
 test_data = torch.cat([X_b for X_b, Y_b in test_loader], dim=0)
 dad_tensor = test_data[:, :, :, 0].float()
 mom_tensor = test_data[:, :, :, 1].float()
 child_tensor_test = test_data[:, :, :, 2].float()
 mean_tensor_test = ((dad_tensor + mom_tensor) / 2)
-
 train_data = torch.cat([X_b for X_b, Y_b in train_loader], dim=0)
 dad_tensor = train_data[:, :, :, 0].float()
 mom_tensor = train_data[:, :, :, 1].float()
 child_tensor_train = train_data[:, :, :, 2].float()
 mean_tensor_train = ((dad_tensor + mom_tensor) / 2)
-
 all_mean_tensor = torch.cat((mean_tensor_train, mean_tensor_test), dim=0)
 all_child_tensor = torch.cat((child_tensor_train, child_tensor_test), dim=0)
-
-# 设置模型为只返回预测值（便于计算梯度）
-# model_cpu = trained_model.cpu()
 trained_model.return_y_only = True
 trained_model.eval()
 torch.cuda.empty_cache()
-
 all_mean_tensor = torch.cat((mean_tensor_train, mean_tensor_test), dim=0)
 all_child_tensor = torch.cat((child_tensor_train, child_tensor_test), dim=0)
 shap_values_list = []
 batch_size = all_child_tensor.shape[0]
-print("开始按一一配对计算 SHAP 值...")
 for i in tqdm(range(0, all_child_tensor.shape[0], batch_size), desc="Batch SHAP"):
     
     batch_start = i
