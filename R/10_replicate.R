@@ -48,7 +48,7 @@ for (times in 1:10){
   yout<-FALSE #if quan==TRUE, whether print y (with and without adding rnorm) for calculating WGS y
   ywgs<-FALSE #if quan==TRUE, whether use y from WGS (still testing) or from current sim
   maxcor<-0.7 #0.7
-  if (linear == FALSE){                                                                                       #1000000
+  if (linear == FALSE){                                                                                       
     sim<-generate_sim_data_nonlinear(effectsize, linear = FALSE, CVorRV=CVorRV, n = n, p = nsnp, region_size = 1000000, sigwin=sigwin,para=para,xchr=xchr,quan=quan,null=null,maxld=maxcor,path="/Users/fuyinghao/Documents/KONet-Trio/simulation_10_replicates/")}else{
       sim<-generate_sim_data_linear(effectsize, CVorRV=CVorRV, n = n, sigwin=sigwin,para=para,xchr=xchr,quan=quan,null=null,maxld=maxcor,path="/Users/fuyinghao/Documents/KONet-Trio/simulation_10_replicates/")
     }
