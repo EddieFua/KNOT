@@ -1,3 +1,3 @@
 # KNOT
 
-More details would be updated soon
+Details to be updated soon.
