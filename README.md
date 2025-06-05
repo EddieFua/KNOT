@@ -10,11 +10,11 @@ The repository includes scripts for simulation data generation, model training, 
 
 ## Repository Structure
 
-- `models/model_combine.py`: Defines the DNN architecture with `PositionalEncoding` for sequence position encoding, `LocallyConnected1D` for non-shared weight convolutions, and `DNN` for the full model, including a Siamese encoder and classifier.
-- `utils.py`: Contains the `Args` class for managing hyperparameters (e.g., learning rate, epochs, latent dimension) and configuration settings.
-- `run_multiple_server.py`: Main script to execute experiments, handling data loading, model training, and feature importance computation using SHAP and gradients.
-- `callback_prediction_quan_combine.py`: Trainer class for quantitative tasks, implementing MSE loss, distance loss, L1 regularization, and R² validation.
-- `callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, distance loss, L1 regularization, and ROC-AUC validation.
+- `function/model_combine.py`: Defines the DNN architecture with `PositionalEncoding` for sequence position encoding, `LocallyConnected1D` for non-shared weight convolutions, and `DNN` for the full model, including a Siamese encoder and classifier.
+- `function/utils.py`: Contains the `Args` class for managing hyperparameters (e.g., learning rate, epochs, latent dimension) and configuration settings.
+- `function/run_multiple_server.py`: Main script to execute experiments, handling data loading, model training, and feature importance computation using SHAP and gradients.
+- `function/callback_prediction_quan_combine.py`: Trainer class for quantitative tasks, implementing MSE loss, distance loss, L1 regularization, and R² validation.
+- `function/callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, distance loss, L1 regularization, and ROC-AUC validation.
 
 
 ## Installation
@@ -73,7 +73,7 @@ python run_multiple_server.py --sample_size 3000 --quan False --data_path /path/
 
 ### Example Workflow
 
-1. **Prepare Data**: Place data files in the specified directory.
+1. **Prepare Data**: Use the R code `R/10_replicate.R` to generate simulation data.
 
 2. **Run Experiment**:
 
