@@ -1,11 +1,10 @@
 # Knockoff-augmented neural networks for variable selection in correlated data with applications to family-based GWAS
 
-We introduce **KNOT**, a *k*nockoff-augmented *n*eural network *o*n *t*rio data.  Family studies are a branch of genetic association studies where patients (children)
-share a large number of similar features with controls (parents) due to familial relatedness.The proposed neural network tackles the correlation in genetic data through two strategies: a global attention mechanism to model short- and long-range correlation between variants, and a contrastive learning strategy to pinpoint disease-associated variants that can effectively differentiate between closely related patients and controls. 
+**KNOT** is a knockoff-augmented neural network on trio data for stabilized variable selection with false discovery rate control in family-based genome-wide association studies.
 
 The repository includes scripts for simulation data generation, model training, and feature importance computation.
 
-![Pipeline](framework.jpg)
+![Pipeline](figure/framework.jpg)
 
 
 ## Repository Structure
@@ -101,4 +100,4 @@ python run_multiple_server.py --sample_size 3000 --quan False --data_path /path/
 
 ## Contact
 
-For questions, open an issue on GitHub or email yinghao.fu@my.cityu.edu.hk.
+For questions, open an issue on GitHub or [email](yinghao.fu@my.cityu.edu.hk), or visit my [personal homepage](https://eddiefua.github.io/).
