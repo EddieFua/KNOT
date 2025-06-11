@@ -80,7 +80,7 @@ python run_multiple_server.py --sample_size 3000 --quan False --data_path /path/
    python run_multiple_server.py --sample_size 5000 --quan True --data_path ./data
    ```
 
-3. **Analyze Results**: Feature importance scores are saved as CSV files for downstream analysis.
+3. **Analyze Results**: Feature importance scores are saved as CSV files for downstream analysis. Use the R script `R/control_fdr_function.R` to analyze these results under knockoff FDR control.
 
 ## Model Details
 
