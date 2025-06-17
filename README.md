@@ -1,6 +1,6 @@
 # Knockoff-augmented neural networks for identifying risk variants in family-based association studies
 
-**KNOT** is a knockoff-augmented neural network on trio data for stabilized variable selection with false discovery rate control in family-based genome-wide association studies.
+**KNOT** is a **k**nockoff-augmented **n**eural network **o**n **t**rio data for stabilized variable selection with false discovery rate control in family-based genome-wide association studies.
 
 The repository includes scripts for simulation data generation, model training, and feature importance computation.
 
