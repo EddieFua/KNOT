@@ -9,11 +9,11 @@ The repository includes scripts for simulation data generation, model training, 
 
 ## Repository Structure
 
-- `function/model_combine.py`: Defines the DNN architecture with `PositionalEncoding` for sequence position encoding, `LocallyConnected1D` for non-shared weight convolutions, and `DNN` for the full model, including a Siamese encoder and classifier.
-- `function/utils.py`: Contains the `Args` class for managing hyperparameters (e.g., learning rate, epochs, latent dimension) and configuration settings.
-- `function/run_multiple_server.py`: Main script to execute experiments, handling data loading, model training, and feature importance computation using SHAP and gradients.
-- `function/callback_prediction_quan_combine.py`: Trainer class for quantitative tasks, implementing MSE loss, distance loss, L1 regularization, and R² validation.
-- `function/callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, distance loss, L1 regularization, and ROC-AUC validation.
+- `KNOT/model_combine.py`: Defines the DNN architecture with `PositionalEncoding` for sequence position encoding, `LocallyConnected1D` for non-shared weight convolutions, and `DNN` for the full model, including a Siamese encoder and classifier.
+- `KNOT/utils.py`: Contains the `Args` class for managing hyperparameters (e.g., learning rate, epochs, latent dimension) and configuration settings.
+- `KNOT/run_multiple_server.py`: Main script to execute experiments, handling data loading, model training, and feature importance computation using SHAP and gradients.
+- `KNOT/callback_prediction_quan_combine.py`: Trainer class for quantitative tasks, implementing MSE loss, distance loss, L1 regularization, and R² validation.
+- `KNOT/callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, distance loss, L1 regularization, and ROC-AUC validation.
 
 
 ## Installation
