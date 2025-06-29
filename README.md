@@ -72,15 +72,13 @@ python run_multiple_server.py --sample_size 3000 --quan False --data_path /path/
 
 ### Example Workflow
 
-1. **Prepare Data**: Use the R code `R/10_replicate.R` to generate simulation data.
-
-2. **Run Experiment**:
+1. **Run Experiment**:
 
    ```bash
-   python run_multiple_server.py --sample_size 5000 --quan True --data_path ./data
+   python run_multiple_server.py --sample_size 3000 --quan False --data_path ./KNOT/example_data
    ```
 
-3. **Analyze Results**: Feature importance scores are saved as CSV files for downstream analysis. Use the R script `R/control_fdr_function.R` to analyze these results under knockoff FDR control.
+2, **Analyze Results**: Feature importance scores are saved as CSV files for downstream analysis. 
 
 ## Model Details
 

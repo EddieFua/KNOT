@@ -8,8 +8,8 @@ class Args:
         self.dropout = 0.3
         self.batch_size = 128
         self.num_epochs = num_epochs
-        self.l1_regularization = 0.000002
-        self.weight_decay = 0.05
+        self.l1_regularization = 0.00002
+        self.weight_decay = 0.01
         self.lr = lr
         self.latent_dim = 32
         self.weight = weight

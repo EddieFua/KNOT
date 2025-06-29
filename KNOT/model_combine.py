@@ -27,6 +27,9 @@ class LocallyConnected1D(nn.Module):
     """Implements a 1D locally connected layer without weight sharing."""
     def __init__(self, in_channels, out_channels, input_length, kernel_size, stride=1, bias=True):
         super().__init__()
+        self.input_length = input_length
+        self.kernel_size = kernel_size
+        self.stride = stride
         self.output_length = (input_length - kernel_size) // stride + 1
         self.weight = nn.Parameter(torch.randn(self.output_length, out_channels, in_channels, kernel_size))
         self.bias = nn.Parameter(torch.randn(out_channels, self.output_length)) if bias else None

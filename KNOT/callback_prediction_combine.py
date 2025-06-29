@@ -67,7 +67,7 @@ class TrainerWithCallback:
     def train(self, train_loader, test_loader, num_epochs, alpha):
         """Train the model with early stopping."""
         best_val_score, best_model_state, epochs_no_improve = -float('inf'), None, 0
-        patience = 80
+        patience = 5
 
         for epoch in range(num_epochs):
             self.model.train()

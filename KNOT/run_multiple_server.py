@@ -1,14 +1,18 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import argparse
 import torch
 import numpy as np
 import pandas as pd
 import pyreadr
 from torch.utils.data import DataLoader, TensorDataset, random_split
-from models.model_combine import DNN
-from utils.args import Args
+from model_combine import DNN
+from utils import Args          
 import torch.optim as optim
-from tqdm import tqdm
+from tqdm.auto import tqdm  
 import shap
+from torch.utils.data import random_split
 
 def run_experiment(sample_size, quan, data_path, seed=42):
     """Run a single experiment for genomic data analysis.
@@ -24,11 +28,11 @@ def run_experiment(sample_size, quan, data_path, seed=42):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     if quan:
-        from utils.callback_prediction_quan_combine import TrainerWithCallback
-        alpha = 60
+        from callback_prediction_quan_combine import TrainerWithCallback
+        alpha = 50
     else:
-        from utils.callback_prediction_combine import TrainerWithCallback
-        alpha = 10
+        from callback_prediction_combine import TrainerWithCallback
+        alpha = 8
 
     # Load data
     child_array = pyreadr.read_r(f'{data_path}/child_array.RData')['child_array'].values
@@ -57,27 +61,59 @@ def run_experiment(sample_size, quan, data_path, seed=42):
     # Prepare data loaders
     dataset = TensorDataset(X_tensor, Y_tensor)
     train_size = int(0.8 * len(dataset))
-    train_loader = DataLoader(dataset[:train_size], batch_size=args.batch_size, shuffle=True)
-    test_loader = DataLoader(dataset[train_size:], batch_size=args.batch_size, shuffle=False)
+    test_size = len(dataset) - train_size
+    train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
 
-    # Train model
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
+
     model = DNN(args).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     trainer = TrainerWithCallback(args, model, optimizer, device)
-    trained_model, feature_importances = trainer.train(train_loader, test_loader, args.num_epochs, alpha)
+    trained_model, feature_importances = trainer.train(train_loader, test_loader, num_epochs=args.num_epochs, alpha=alpha)
+    df = pd.DataFrame(feature_importances.T)
+    df.to_csv(f'{data_path}/FI_nn_final_gradient.csv', index=False, header=False)
 
-    # Save feature importance
-    pd.DataFrame(feature_importances.T).to_csv(f'{data_path}/FI_nn_final_gradient.csv', index=False, header=False)
 
-    # Compute SHAP values
-    test_data = torch.cat([X_b for X_b, _ in test_loader], dim=0)
-    mean_tensor = (test_data[:, :, :, 0] + test_data[:, :, :, 1]) / 2
-    child_tensor = test_data[:, :, :, 2]
+    test_data = torch.cat([X_b for X_b, Y_b in test_loader], dim=0)
+    dad_tensor = test_data[:, :, :, 0].float()
+    mom_tensor = test_data[:, :, :, 1].float()
+    child_tensor_test = test_data[:, :, :, 2].float()
+    mean_tensor_test = ((dad_tensor + mom_tensor) / 2)
+
+    train_data = torch.cat([X_b for X_b, Y_b in train_loader], dim=0)
+    dad_tensor = train_data[:, :, :, 0].float()
+    mom_tensor = train_data[:, :, :, 1].float()
+    child_tensor_train = train_data[:, :, :, 2].float()
+    mean_tensor_train = ((dad_tensor + mom_tensor) / 2)
+
+    all_mean_tensor = torch.cat((mean_tensor_train, mean_tensor_test), dim=0)
+    all_child_tensor = torch.cat((child_tensor_train, child_tensor_test), dim=0)
+    trained_model.return_y_only = True
     trained_model.eval()
-    explainer = shap.GradientExplainer(trained_model, mean_tensor.to(device))
-    shap_values = explainer.shap_values(child_tensor.to(device))
-    mean_abs_shap = np.mean(np.abs(shap_values), axis=0)
-    pd.DataFrame(mean_abs_shap.T).to_csv(f'{data_path}/FI_nn_final_shap.csv', index=False, header=False)
+    torch.cuda.empty_cache()
+    all_mean_tensor = torch.cat((mean_tensor_train, mean_tensor_test), dim=0)
+    all_child_tensor = torch.cat((child_tensor_train, child_tensor_test), dim=0)
+    shap_values_list = []
+    batch_size = all_child_tensor.shape[0]
+    print("开始按一一配对计算 SHAP 值...")
+    for i in tqdm(range(0, all_child_tensor.shape[0], batch_size), desc="Batch SHAP"):
+        batch_start = i
+        batch_end = min(i + batch_size, all_child_tensor.shape[0])
+        background = all_mean_tensor[batch_start:batch_end].to(device)  # [batch_size, num_features, num_knockoffs]
+        explanation = all_child_tensor[batch_start:batch_end].to(device)  # [batch_size, num_features, num_knockoffs]
+        explainer = shap.GradientExplainer(trained_model, background)
+        shap_val = explainer.shap_values(explanation)
+        if isinstance(shap_val, list):
+            shap_val = shap_val[0]
+        shap_values_list.append(shap_val)
+    shap_values_all = np.concatenate(shap_values_list, axis=0)
+    mean_abs_shap = np.mean(np.abs(shap_values_all), axis=0)
+    # mean_abs_shap = np.mean(shap_values_all, axis=0)
+    if mean_abs_shap.ndim > 2:
+        mean_abs_shap = np.squeeze(mean_abs_shap, axis=-1)
+    df = pd.DataFrame(mean_abs_shap.T)
+    df.to_csv(f'{data_path}/FI_nn_final_shap.csv', index=False, header=False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run genomic data analysis experiment.")
