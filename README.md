@@ -70,16 +70,6 @@ python run_multiple_server.py --sample_size 3000 --quan False --data_path /path/
 - `FI_nn_final_gradient.csv`: Gradient-based feature importance.
 - `FI_nn_final_shap.csv`: SHAP-based feature importance.
 
-### Example Workflow
-
-1. **Run Experiment**:
-
-   ```bash
-   python run_multiple_server.py --sample_size 3000 --quan False --data_path ./KNOT/example_data
-   ```
-
-2, **Analyze Results**: Feature importance scores are saved as CSV files for downstream analysis. 
-
 ## Model Details
 
 ### Training
