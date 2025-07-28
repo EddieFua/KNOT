@@ -96,7 +96,6 @@ def run_experiment(sample_size, quan, data_path, seed=42):
     all_child_tensor = torch.cat((child_tensor_train, child_tensor_test), dim=0)
     shap_values_list = []
     batch_size = all_child_tensor.shape[0]
-    print("开始按一一配对计算 SHAP 值...")
     for i in tqdm(range(0, all_child_tensor.shape[0], batch_size), desc="Batch SHAP"):
         batch_start = i
         batch_end = min(i + batch_size, all_child_tensor.shape[0])
