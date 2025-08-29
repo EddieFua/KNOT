@@ -1,29 +1,35 @@
-# Knockoff-augmented neural networks for identifying risk variants in family-based association studies
+# Knockoff-Augmented Neural Networks for Identifying Risk Variants in Family-Based Association Studies
 
-**KNOT** is a **k**nockoff-augmented **n**eural network **o**n **t**rio data for stabilized variable selection with false discovery rate control in family-based genome-wide association studies.
+**KNOT** (**K**nockoff-augmented **N**eural network **o**n **T**rio data) is designed for stabilized variable selection with false discovery rate (FDR) control in family-based genome-wide association studies (GWAS).
 
-The repository includes scripts for simulation data generation, model training, and feature importance computation.
+This repository provides scripts for simulation data generation, model training, and feature importance computation.
 
 ![Pipeline](figure/framework.jpg)
 
+---
 
 ## Repository Structure
 
-- `KNOT/model_combine.py`: Defines the DNN architecture with `PositionalEncoding` for sequence position encoding, `LocallyConnected1D` for non-shared weight convolutions, and `DNN` for the full model, including a Siamese encoder and classifier.
-- `KNOT/utils.py`: Contains the `Args` class for managing hyperparameters (e.g., learning rate, epochs, latent dimension) and configuration settings.
-- `KNOT/run_multiple_server.py`: Main script to execute experiments, handling data loading, model training, and feature importance computation using SHAP and gradients.
-- `KNOT/callback_prediction_quan_combine.py`: Trainer class for quantitative tasks, implementing MSE loss, distance loss, L1 regularization, and R² validation.
-- `KNOT/callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, distance loss, L1 regularization, and ROC-AUC validation.
+- `KNOT/model_combine.py`: Defines the DNN architecture with:
+  - `PositionalEncoding` for sequence position encoding  
+  - `LocallyConnected1D` for non-shared weight convolutions  
+  - `DNN` for the full model, including a Siamese encoder and classifier  
+- `KNOT/utils.py`: Contains the `Args` class for managing hyperparameters (e.g., learning rate, epochs, latent dimension) and configuration settings.  
+- `KNOT/run_multiple_server.py`: Main script to execute experiments, handling data loading, model training, and feature importance computation using SHAP and gradients.  
+- `KNOT/callback_prediction_quan_combine.py`: Trainer class for quantitative tasks, implementing MSE loss, contrastive (distance) loss, L1 regularization, and R² validation.  
+- `KNOT/callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, contrastive (distance) loss, L1 regularization, and ROC-AUC validation.  
+- `KNOT/generate_knockoffs.R`: Functions for generating knockoffs.  
+- `KNOT/permutation_test.R`: Function for permutation tests based on SHAP interaction values.  
 
+---
 
 ## Installation
 
-1. **Clone the Repository**:
+1. **Clone the repository**:
 
    ```bash
    git clone https://github.com/EddieFua/KNOT.git
    cd KNOT
-   ```
 
 2. **Set Up Environment**:
 
@@ -44,6 +50,25 @@ The repository includes scripts for simulation data generation, model training, 
    - `tqdm`
 
 ## Usage
+
+### Generating knockoffs:
+Use `generate_knockoffs.R` to create knockoffs.
+The file `original.RData` contains simulated genotype data with samples ordered as: dad → mom → offspring in each trio.
+```R
+load("./example_data/Binary/original.RData")
+dat1 = knockofftrio_create_knockoff(
+  dat = sim$dat,
+  pos = sim$pos,
+  M = 10,
+  hap = TRUE,
+  dat.hap = sim$dat.hap,
+  xchr = FALSE,
+  sex = sim$sex,
+  phasing.dad = sim$phasing.dad,
+  phasing.mom = sim$phasing.mom
+)
+```
+
 
 ### Running an Experiment
 
@@ -84,7 +109,25 @@ python run_multiple_server.py --sample_size 3000 --quan False --data_path /path/
 
 - **GWAS**: Identifies significant features using p-values.
 - **Pathway Enrichment**: Maps features to biological pathways.
+- **Interaction Identification**: Permutation test based on SHAP interaction value.
 - **PRS**: Computes risk scores based on feature effect sizes.
+
+```R
+### Example: Interaction Identification
+# genotype_dat: matrix with rows as samples and columns as selected variants
+# y: phenotype labels
+# gene_closer: mapping of each variant to its gene
+# N: number of permutations
+
+res = compute_shap_interaction_pvalues(
+  genotype_dat,
+  y,
+  gene_closer,
+  N = 100,
+  cores = 10,
+  seed = 10
+)
+```
 
 ## Contact
 
