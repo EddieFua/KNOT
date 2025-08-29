@@ -4,7 +4,7 @@
 
 This repository provides scripts for simulation data generation, model training, and feature importance computation.
 
-![Pipeline](figure/framework.jpg)
+![Pipeline](figure/framework.pdf)
 
 ---
 
