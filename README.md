@@ -18,7 +18,7 @@ This repository provides scripts for simulation data generation, model training,
 - `KNOT/run.py`: Main script to execute experiments, handling data loading, model training, and feature importance computation using SHAP and gradients.  
 - `KNOT/callback_prediction_quan_combine.py`: Trainer class for quantitative tasks, implementing MSE loss, contrastive (distance) loss, L1 regularization, and R² validation.  
 - `KNOT/callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, contrastive (distance) loss, L1 regularization, and ROC-AUC validation.  
-- `KNOT/generate_knockoffs.R`: Functions for generating knockoffs.  
+- `KNOT/generate_knockoff.R`: Functions for generating knockoffs.  
 - `KNOT/permutation_test.R`: Function for permutation tests based on SHAP interaction values.  
 - `KNOT/get_knowledge.R`: Function for calculating FBAT-based prior knowledge.
 
@@ -56,7 +56,7 @@ This repository provides scripts for simulation data generation, model training,
 Use `generate_knockoffs.R` to create knockoffs.
 The file `./example_data/Binary/original.RData` contains simulated genotype data with samples ordered as: dad → mom → offspring in each trio.
 ```R
-source('./KNOT/generate_knockoffs.R')
+source('./KNOT/generate_knockoff.R')
 load("./example_data/Binary/original.RData")
 
 dat1 = knockofftrio_create_knockoff(
@@ -79,22 +79,23 @@ index_off <- seq(3, dim(sim$dat)[1], 3)
 index_dad <- seq(1, dim(sim$dat)[1] - 2, 3)
 index_mom <- seq(2, dim(sim$dat)[1] - 1, 3)
 
+M = 10 #num of knockoffs
 # Create arrays
-child_array <- array(dim = c(dim(parent_matrix)[1], dim(sim$dat)[2], max(M.vec) + 1))
+child_array <- array(dim = c(dim(parent_matrix)[1], dim(sim$dat)[2], M + 1))
 child_array[, , 1] <- sim$dat[index_off, ]
-for (i in 2:(max(M.vec) + 1)) {
+for (i in 2:(max(M) + 1)) {
   child_array[, , i] <- dat1[index_off, , i - 1]
 }
 
-dad_array <- array(dim = c(dim(parent_matrix)[1], dim(parent_matrix)[2], max(M.vec) + 1))
+dad_array <- array(dim = c(dim(parent_matrix)[1], dim(parent_matrix)[2], max(M) + 1))
 dad_array[, , 1] <- sim$dat[index_dad, ]
-for (i in 2:(max(M.vec) + 1)) {
+for (i in 2:(max(M) + 1)) {
   dad_array[, , i] <- dat1[index_dad, , i - 1]
 }
 
-mom_array <- array(dim = c(dim(parent_matrix)[1], dim(parent_matrix)[2], max(M.vec) + 1))
+mom_array <- array(dim = c(dim(parent_matrix)[1], dim(parent_matrix)[2], max(M) + 1))
 mom_array[, , 1] <- sim$dat[index_mom, ]
-for (i in 2:(max(M.vec) + 1)) {
+for (i in 2:(max(M) + 1)) {
   mom_array[, , i] <- dat1[index_mom, , i - 1]
 }
 
@@ -109,7 +110,7 @@ source('./KNOT/get_knowledge.R')
 load('./example_data/Binary/dat1.RData')
 load('./example_data/Binary/original.RData')
 
-prior <- get_knowledge(dat1, sim, path = './KNOT/example_data/Binary/', quan = FALSE)
+prior <- get_knowledge(dat1, sim, path = './example_data/Binary/', quan = FALSE)
 # This produces `weight.csv` used by the Python pipeline
 ```
 
