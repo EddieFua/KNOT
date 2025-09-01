@@ -387,5 +387,18 @@ knockofftrio_create_knockoff<-function(dat,pos,M=10,hap=FALSE,dat.hap=NA,xchr=FA
   return(dat1)
 }
 
+Compute_expected<-function(dat){
+  n <- nrow(dat)/3
+  index_dad <- seq(1, (3 * n), 3)
+  index_mom <- seq(2, (3 * n), 3)
+  index_off <- seq(3, (3 * n), 3)
+  parent_matrix <- dat[-index_off, ]
+  expected_matrix <- dat[index_off, ]
+  for (i in 1:n){
+    expected_matrix[i,] = apply(parent_matrix[c(i*2-1,i*2),],2,mean)
+  }
+  return(expected_matrix)
+}
+
 maxcor<-0.7
 maxbp<-500000
