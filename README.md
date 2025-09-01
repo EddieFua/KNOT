@@ -20,7 +20,7 @@ This repository provides scripts for simulation data generation, model training,
 - `KNOT/callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, contrastive (distance) loss, L1 regularization, and ROC-AUC validation.  
 - `KNOT/generate_knockoffs.R`: Functions for generating knockoffs.  
 - `KNOT/permutation_test.R`: Function for permutation tests based on SHAP interaction values.  
-- `KNOT/get_knowledge.R`: Function for calculating FBAT-based prior knowledge.  
+- `KNOT/get_knowledge.R`: Function for calculating FBAT-based prior knowledge.
 
 ---
 
