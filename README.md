@@ -54,7 +54,7 @@ This repository provides scripts for simulation data generation, model training,
 
 ### **Step 1**: Generate Knockoffs and Format Input Data
 Use `generate_knockoffs.R` to create knockoffs.
-The file `original.RData` contains simulated genotype data with samples ordered as: dad → mom → offspring in each trio.
+The file `./example_data/Binary/original.RData` contains simulated genotype data with samples ordered as: dad → mom → offspring in each trio.
 ```R
 source('./KNOT/generate_knockoffs.R')
 load("./example_data/Binary/original.RData")
@@ -103,7 +103,7 @@ save(mom_array, file = './example_data/Binary/mom_array.RData')
 save(child_array, file = './example_data/Binary/child_array.RData')
 ```
 
-###**Step 2**: Compute prior knowledge (FBAT weights)
+### **Step 2**: Compute prior knowledge (FBAT weights)
 ```R
 source('./KNOT/get_knowledge.R')
 load('./example_data/Binary/dat1.RData')
