@@ -184,7 +184,7 @@ gene_closer <- 1:ncol(genotype_dat)
 
 res <- compute_shap_interaction_pvalues(
   genotype_dat = genotype_dat,
-  Y = Y,
+  y = Y,
   gene_closer = gene_closer,
   N = 100,
   seed = 10
@@ -193,10 +193,10 @@ res <- compute_shap_interaction_pvalues(
 
 #### Arguments:
 - `--genotype`: 3n × p matrix for selected variants.
-- `--Y`: Phenotype vector of length 3n.
+- `--y`: Phenotype vector of length 3n.
 - `--gene_closer`:  A vector of length p that annotates each selected variant with its corresponding gene name
 - `--N`:  Number of permutations.
-- `-- seed`: Random seed.
+- `--seed`: Random seed.
 
 #### Outputs
 
