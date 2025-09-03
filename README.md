@@ -127,7 +127,7 @@ prior <- get_knowledge(dat1, sim$dat, y, path = './example_data/Binary/', quan =
 - `--quan`: `TRUE` for quantitative, `FALSE` for binary phenotype.
 
 #### Outputs:
-- `prior`: (M+1)*p matrix of prior knowledge, first row corresponds to original variants.
+- `prior`: (M+1) × p matrix of prior knowledge, first row corresponds to original variants.
 
 ### **Step 3**: Run KNOT
 
@@ -163,7 +163,7 @@ q = MK.q.byStat(FIs, M = 10)
 sel_idx = which(q < target_fdr_level)  # indices of selected variants
 ```
 #### Arguments:
-- `--FIs`: Feature importance matrix, (M+1)*p.
+- `--FIs`: Feature importance matrix, (M+1) × p.
 - `--M`: Number of knockoffs. 
 
 #### Outputs:
@@ -192,7 +192,7 @@ res <- compute_shap_interaction_pvalues(
 ```
 A 3n*p matrix for trio genotype data. 
 #### Arguments:
-- `--genotype`: 3n*p matrix for selected variants.
+- `--genotype`: 3n × p matrix for selected variants.
 - `--Y`: Phenotype vector of length 3n.
 - `--gene_closer`:  A vector of length p that annotates each selected variant with its corresponding gene name
 - `--N`:  Number of permutations.
