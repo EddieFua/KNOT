@@ -21,7 +21,7 @@ This repository provides scripts for simulation data generation, model training,
 - `KNOT/generate_knockoff.R`: Functions for generating knockoffs.  
 - `KNOT/permutation_test.R`: Function for permutation tests based on SHAP interaction values.  
 - `KNOT/get_knowledge.R`: Function for calculating FBAT-based prior knowledge.
-
+- `KNOT/knockoff_filter.R`: : Implements q-value computation for multi-knockoff FDR control.
 ---
 
 ## Installation
@@ -138,54 +138,23 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
 - `FI_nn_final_shap.csv`: SHAP-based feature importance.
 
 ### **Step 4**: Identification of Risk Variants
-Control FDR with the multi-knockoff procedure:
-
+Control FDR with the multi-knockoff procedure. Use `knockoff_filter.R` to compute q-values.
 ```R
-MK.q.byStat<-function (kappa,tau,M,Rej.Bound=10000){
-  b<-order(tau,decreasing=T)
-  c_0<-kappa[b]==0
-  #calculate ratios for top Rej.Bound tau values
-  ratio<-c();temp_0<-0
-  for(i in 1:length(b)){
-    #if(i==1){temp_0=c_0[i]}
-    temp_0<-temp_0+c_0[i]
-    temp_1<-i-temp_0
-    temp_ratio<-(1/M+1/M*temp_1)/max(1,temp_0)
-    ratio<-c(ratio,temp_ratio)
-    if(i>Rej.Bound){break}
-  }
-  #calculate q values for top Rej.Bound values
-  q<-rep(1,length(tau))
-  for(i in 1:length(b)){
-    q[b[i]]<-min(ratio[i:min(length(b),Rej.Bound)])*c_0[i]+1-c_0[i]
-    if(i>Rej.Bound){break}
-  }
-  return(q)
-}
+source('/Users/fuyinghao/KNOT/KNOT/knockoff_filter.R')
 FIs = read.csv('./example_data/Binary/FI_nn_final_shap.csv', header = F)
-FIs = as.matrix(FIs)
-M = nrow(FIs)-1
-kappa <- apply(FIs, 2, function(x) {
-  if (all(x == 0)) {
-    return(1)
-  } else {
-    return(which.max(x) - 1)
-  }
-})
-tau <- apply(FIs, 2, function(i) max(i) - median(i[-which.max(i)]))
-W <- apply(FIs, 2, function(i) (i[1] - median(i[2:(M+1)])) * ifelse(i[1] >= max(i[2:(M+1)]), 1, 0))
-q = MK.q.byStat(kappa = kappa, tau = tau, M = M)
+q = MK.q.byStat (FIs, M = 10)
 ```
 
 ### **Step 5**: Identification of Interaction (Permutation Test)
-
+Use the q-values from Step 4 (e.g., target FDR = 0.2) to select variants.
+In the simulation setting, assume one variant corresponds to one gene.
 
 ```R
 load("./example_data/Binary/original.RData")
 load("./example_data/Binary/y.RData")
 source('./KNOT/permutation_test.R')
-genotype_dat <- sim$dat[, q < 0.2] # FDR level = 0.2
-gene_closer <- 1:ncol(genotype_dat) # one gene per variant (simulation setting)
+genotype_dat <- sim$dat[, q < 0.2] 
+gene_closer <- 1:ncol(genotype_dat)
 
 res <- compute_shap_interaction_pvalues(
   genotype_dat,
