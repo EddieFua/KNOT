@@ -177,13 +177,13 @@ W <- apply(FIs, 2, function(i) (i[1] - median(i[2:(M+1)])) * ifelse(i[1] >= max(
 q = MK.q.byStat(kappa = kappa, tau = tau, M = M)
 ```
 
-### **Step 5**: Identification of Interaction
+### **Step 5**: Identification of Interaction (Permutation Test)
 
 
 ```R
 load("./example_data/Binary/original.RData")
 load("./example_data/Binary/y.RData")
-
+source('./KNOT/permutation_test.R')
 genotype_dat <- sim$dat[, q < 0.2] # FDR level = 0.2
 gene_closer <- 1:ncol(genotype_dat) # one gene per variant (simulation setting)
 
