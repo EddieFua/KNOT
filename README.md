@@ -205,7 +205,7 @@ res <- compute_shap_interaction_pvalues(
     Contains pairwise variant interaction results.
   - `gene_results`: `data.frame` with columns `{gene1, gene2, max_raw_value, p_value_raw}`  
     Aggregates interactions at the gene level using the maximum SHAP interaction value for variants mapped to each gene.
-  - `null_raw_array`: 3D array `[N × n_features × n_features]` of null SHAP interaction values  
+  - `null_raw_array`: 3D array `[3n × p × p]` of null SHAP interaction values  
     Stores SHAP interaction values generated under permutation (null) for p-value computation.
 
 
