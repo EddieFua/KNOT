@@ -137,16 +137,6 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
 - `FI_nn_final_gradient.csv`: Gradient-based feature importance.
 - `FI_nn_final_shap.csv`: SHAP-based feature importance.
 
-## Model Details
-
-### Training
-
-- **Early Stopping**: Patience of 5 epochs.
-- **Loss**:
-  - Quantitative: MSE + contrastive loss + L1 regularization.
-  - Classification: BCE + contrastive loss + L1 regularization.
-- **Hyperparameters**: Configurable via `Args` (e.g., learning rate: 0.0001, epochs: 50, latent_dim: 32).
-
 ### **Step 4**: Identification of Risk Variants
 Control FDR with the multi-knockoff procedure:
 ```R
