@@ -218,14 +218,14 @@ fbat<-function(dat,adjust_for_covariates=FALSE,y=NA,dosage=FALSE,dat1=NA,xchr=FA
 }
 
 
-get_knowledge <- function(dat1, sim, path, quan = TRUE) {
-  p_matrix <- matrix(nrow = dim(dat1)[3] + 1, ncol = dim(sim$dat)[2])
+get_knowledge <- function(dat1, dat, y, path, quan = TRUE) {
+  p_matrix <- matrix(nrow = dim(dat1)[3] + 1, ncol = dim(dat)[2])
   for (i in 2:(dim(dat1)[3] + 1)) {
     if (quan) {
       res_fbat <- fbat(
         dat1[, , i - 1],
         adjust_for_covariates = TRUE,
-        y = sim$y[seq(3, (3 * nrow(sim$dat) / 3), 3)] - mean(sim$y),
+        y = y[seq(3, (3 * nrow(dat) / 3), 3)] - mean(y),
         dosage = FALSE,
         dat1 = NA,
         xchr = FALSE,
@@ -249,9 +249,9 @@ get_knowledge <- function(dat1, sim, path, quan = TRUE) {
   }
   if (quan) {
     res_fbat <- fbat(
-      sim$dat,
+      dat,
       adjust_for_covariates = TRUE,
-      y = sim$y[seq(3, (3 * nrow(sim$dat) / 3), 3)] - mean(sim$y),
+      y = y[seq(3, (3 * nrow(dat) / 3), 3)] - mean(y),
       dosage = FALSE,
       dat1 = NA,
       xchr = FALSE,
@@ -259,7 +259,7 @@ get_knowledge <- function(dat1, sim, path, quan = TRUE) {
     )
   } else {
     res_fbat <- fbat(
-      sim$dat,
+      dat,
       adjust_for_covariates = FALSE,
       y = NA,
       dosage = FALSE,

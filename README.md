@@ -10,7 +10,7 @@ This repository provides scripts for simulation data generation, model training,
 
 ## Repository Structure
 
-- `KNOT/model_combine.py`: Defines the DNN architecture with:
+- `KNOT/model_combine.py`: Defines the DNN architecture, including:
   - `PositionalEncoding` for sequence position encoding  
   - `LocallyConnected1D` for non-shared weight convolutions  
   - `DNN` for the full model, including a Siamese encoder and classifier  
@@ -20,8 +20,9 @@ This repository provides scripts for simulation data generation, model training,
 - `KNOT/callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, contrastive (distance) loss, L1 regularization, and ROC-AUC validation.  
 - `KNOT/generate_knockoff.R`: Functions for generating knockoffs.  
 - `KNOT/permutation_test.R`: Function for permutation tests based on SHAP interaction values.  
-- `KNOT/get_knowledge.R`: Function for calculating FBAT-based prior knowledge.
-- `KNOT/knockoff_filter.R`: : Implements q-value computation for multi-knockoff FDR control.
+- `KNOT/get_knowledge.R`: Function for calculating FBAT-based prior knowledge.  
+- `KNOT/knockoff_filter.R`: Implements q-value computation for multi-knockoff FDR control.
+
 ---
 
 ## Installation
@@ -63,10 +64,7 @@ dat1 = knockofftrio_create_knockoff(
   dat = sim$dat,
   pos = sim$pos,
   M = M,
-  hap = TRUE,
   dat.hap = sim$dat.hap,
-  xchr = FALSE,
-  sex = sim$sex,
   phasing.dad = sim$phasing.dad,
   phasing.mom = sim$phasing.mom
 )
@@ -102,6 +100,16 @@ save(dad_array, file = './example_data/Binary/dad_array.RData')
 save(mom_array, file = './example_data/Binary/mom_array.RData')
 save(child_array, file = './example_data/Binary/child_array.RData')
 ```
+#### Arguments:
+- `--dat`: 3n*p matrix for trio genotype data, with n trios and p variants (ordered as father → mother → offspring).
+- `--pos`: Numeric vector of length p indicating variant positions.
+- `--M`: Number of knockoffs. 
+- `--dat.hap`: 6n*p haplotype matrix for trios (0/1 coding).
+- `--phasing.dad/phasing.mom`: Indicates which haplotype was transmitted (1 or 2); if NULL, automatically inferred.
+
+#### Outputs:
+- `dat1`: 3n*p*M array of knockoff trio genotype data.
+
 
 ### **Step 2**: Compute prior knowledge (FBAT weights)
 ```R
@@ -109,9 +117,17 @@ source('./KNOT/get_knowledge.R')
 load('./example_data/Binary/dat1.RData')
 load('./example_data/Binary/original.RData')
 
-prior <- get_knowledge(dat1, sim, path = './example_data/Binary/', quan = FALSE)
-# This produces `weight.csv` used by the Python pipeline
+prior <- get_knowledge(dat1, sim$dat, y, path = './example_data/Binary/', quan = FALSE)
 ```
+#### Arguments:
+- `--dat1`: Knockoff trio genotype array. 
+- `--dat`: Original trio genotype matrix. 
+- `--y`: Phenotype vector of length 3n.
+- `--path`: Directory to save prior knowledge.
+- `--quan`: `TRUE` for quantitative, `FALSE` for binary phenotype.
+
+#### Outputs:
+- `prior`: (M+1)*p matrix of prior knowledge, first row corresponds to original variants.
 
 ### **Step 3**: Run KNOT
 
@@ -122,8 +138,8 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
 
 #### Arguments:
 
-- `--sample_size`: Number of samples (default: 3000).
-- `--quan`: True for quantitative, False for classification (default: False).
+- `--sample_size`: Number of samples.
+- `--quan`: `True` for quantitative, `False` for classification.
 - `--data_path`: Directory with data files (e.g., `child_array.RData`, `dad_array.RData`, `mom_array.RData`, `weight.csv`, `y.RData`).
 
 #### Data Format:
@@ -146,6 +162,14 @@ target_fdr_level = 0.2
 q = MK.q.byStat(FIs, M = 10)
 sel_idx = which(q < target_fdr_level)  # indices of selected variants
 ```
+#### Arguments:
+- `--FIs`: Feature importance matrix, (M+1)*p.
+- `--M`: Number of knockoffs. 
+
+#### Outputs:
+- `q`: q-values of variants.
+- `sel_idx`: Indices of variants passing FDR threshold.
+
 
 ### **Step 5**: Identification of Interaction (Permutation Test)
 Use the q-values from Step 4 (e.g., target FDR = 0.2) to select variants and test interactions with `permutation_test.R`
@@ -163,14 +187,31 @@ res <- compute_shap_interaction_pvalues(
   Y,
   gene_closer,
   N = 100,
-  cores = 10,
   seed = 10
 )
 ```
+A 3n*p matrix for trio genotype data. 
+#### Arguments:
+- `--genotype`: 3n*p matrix for selected variants.
+- `--Y`: Phenotype vector of length 3n.
+- `--gene_closer`:  A vector of length p that annotates each selected variant with its corresponding gene name
+- `--N`:  Number of permutations.
+- `-- seed`: Random seed.
+
+#### Outputs
+
+- `res`: List of permutation test results, including:
+  - `snp_results`: `data.frame` with columns `{snp1, snp2, raw_value, p_value_raw}`  
+    Contains pairwise variant interaction results.
+  - `gene_results`: `data.frame` with columns `{gene1, gene2, max_raw_value, p_value_raw}`  
+    Aggregates interactions at the gene level using the maximum SHAP interaction value for variants mapped to each gene.
+  - `null_raw_array`: 3D array `[N × n_features × n_features]` of null SHAP interaction values  
+    Stores SHAP interaction values generated under permutation (null) for p-value computation.
+
 
 ## Applications
 
-- **GWAS**: Identifies significant features using p-values.
+- **genotype_dat**: Identifies significant features using p-values.
 - **Pathway Enrichment**: Maps features to biological pathways.
 - **Interaction Identification**: Permutation test based on SHAP interaction value.
 - **PRS**: Computes risk scores based on feature effect sizes.
