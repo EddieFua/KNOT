@@ -148,7 +148,7 @@ sel_idx = which(q < target_fdr_level)  # indices of selected variants
 ```
 
 ### **Step 5**: Identification of Interaction (Permutation Test)
-Use the q-values from Step 4 (e.g., target FDR = 0.2) to select variants.
+Use the q-values from Step 4 (e.g., target FDR = 0.2) to select variants and test interactions with `permutation_test.R`
 In the simulation setting, assume one variant corresponds to one gene.
 
 ```R
