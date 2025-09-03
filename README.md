@@ -140,7 +140,7 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
 ### **Step 4**: Identification of Risk Variants
 Control FDR with the multi-knockoff procedure. Use `knockoff_filter.R` to compute q-values.
 ```R
-source('/Users/fuyinghao/KNOT/KNOT/knockoff_filter.R')
+source('./KNOT/knockoff_filter.R')
 FIs = read.csv('./example_data/Binary/FI_nn_final_shap.csv', header = F)
 q = MK.q.byStat(FIs, M = 10)
 ```
