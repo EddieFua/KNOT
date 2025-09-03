@@ -117,7 +117,7 @@ source('./KNOT/get_knowledge.R')
 load('./example_data/Binary/dat1.RData')
 load('./example_data/Binary/original.RData')
 
-prior <- get_knowledge(dat1, sim$dat, y, path = './example_data/Binary/', quan = FALSE)
+prior <- get_knowledge(dat1, dat = sim$dat, y = sim$y, path = './example_data/Binary/', quan = FALSE)
 ```
 #### Arguments:
 - `--dat1`: Knockoff trio genotype array. 
@@ -159,7 +159,7 @@ Control FDR with the multi-knockoff procedure. Use `knockoff_filter.R` to comput
 source('./KNOT/knockoff_filter.R')
 FIs = read.csv('./example_data/Binary/FI_nn_final_shap.csv', header = F)
 target_fdr_level = 0.2
-q = MK.q.byStat(FIs, M = 10)
+q = MK.q.byStat(FIs = FIs, M = 10)
 sel_idx = which(q < target_fdr_level)  # indices of selected variants
 ```
 #### Arguments:
@@ -183,9 +183,9 @@ genotype_dat <- sim$dat[, q < 0.2]
 gene_closer <- 1:ncol(genotype_dat)
 
 res <- compute_shap_interaction_pvalues(
-  genotype_dat,
-  Y,
-  gene_closer,
+  genotype_dat = genotype_dat,
+  Y = Y,
+  gene_closer = gene_closer,
   N = 100,
   seed = 10
 )
