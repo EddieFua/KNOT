@@ -101,14 +101,14 @@ save(mom_array, file = './example_data/Binary/mom_array.RData')
 save(child_array, file = './example_data/Binary/child_array.RData')
 ```
 #### Arguments:
-- `--dat`: 3n*p matrix for trio genotype data, with n trios and p variants (ordered as father → mother → offspring).
+- `--dat`: 3n × p matrix for trio genotype data, with n trios and p variants (ordered as father → mother → offspring).
 - `--pos`: Numeric vector of length p indicating variant positions.
 - `--M`: Number of knockoffs. 
-- `--dat.hap`: 6n*p haplotype matrix for trios (0/1 coding).
+- `--dat.hap`: 6n × p haplotype matrix for trios (0/1 coding).
 - `--phasing.dad/phasing.mom`: Indicates which haplotype was transmitted (1 or 2); if NULL, automatically inferred.
 
 #### Outputs:
-- `dat1`: 3n*p*M array of knockoff trio genotype data.
+- `dat1`: 3n × p × M array of knockoff trio genotype data.
 
 
 ### **Step 2**: Compute prior knowledge (FBAT weights)
