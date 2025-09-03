@@ -214,7 +214,7 @@ res <- compute_shap_interaction_pvalues(
 - **GWAS**: Identifies significant features using p-values.
 - **Pathway Enrichment**: Maps features to biological pathways.
 - **Interaction Identification**: Permutation test based on SHAP interaction value.
-- **PRS**: Computes risk scores based on feature effect sizes.
+- **PRS**: Computes polygenic risk scores based on feature importances.
 
 
 ## Contact
