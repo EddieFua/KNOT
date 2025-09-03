@@ -50,7 +50,7 @@ This repository provides scripts for simulation data generation, model training,
    - `scikit-learn`
    - `tqdm`
 
-## Steps
+## Workflow
 
 ### **Step 1**: Generate Knockoffs and Format Input Data
 Use `generate_knockoffs.R` to create knockoffs.
@@ -58,11 +58,11 @@ The file `./example_data/Binary/original.RData` contains simulated genotype data
 ```R
 source('./KNOT/generate_knockoff.R')
 load("./example_data/Binary/original.RData")
-
+M = 10 #num of knockoffs
 dat1 = knockofftrio_create_knockoff(
   dat = sim$dat,
   pos = sim$pos,
-  M = 10,
+  M = M,
   hap = TRUE,
   dat.hap = sim$dat.hap,
   xchr = FALSE,
@@ -79,7 +79,6 @@ index_off <- seq(3, dim(sim$dat)[1], 3)
 index_dad <- seq(1, dim(sim$dat)[1] - 2, 3)
 index_mom <- seq(2, dim(sim$dat)[1] - 1, 3)
 
-M = 10 #num of knockoffs
 # Create arrays
 child_array <- array(dim = c(dim(parent_matrix)[1], dim(sim$dat)[2], M + 1))
 child_array[, , 1] <- sim$dat[index_off, ]
@@ -148,6 +147,65 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
   - Classification: BCE + contrastive loss + L1 regularization.
 - **Hyperparameters**: Configurable via `Args` (e.g., learning rate: 0.0001, epochs: 50, latent_dim: 32).
 
+### **Step 4**: Identification of Risk Variants
+Control FDR with the multi-knockoff procedure:
+```R
+MK.q.byStat<-function (kappa,tau,M,Rej.Bound=10000){
+  b<-order(tau,decreasing=T)
+  c_0<-kappa[b]==0
+  #calculate ratios for top Rej.Bound tau values
+  ratio<-c();temp_0<-0
+  for(i in 1:length(b)){
+    #if(i==1){temp_0=c_0[i]}
+    temp_0<-temp_0+c_0[i]
+    temp_1<-i-temp_0
+    temp_ratio<-(1/M+1/M*temp_1)/max(1,temp_0)
+    ratio<-c(ratio,temp_ratio)
+    if(i>Rej.Bound){break}
+  }
+  #calculate q values for top Rej.Bound values
+  q<-rep(1,length(tau))
+  for(i in 1:length(b)){
+    q[b[i]]<-min(ratio[i:min(length(b),Rej.Bound)])*c_0[i]+1-c_0[i]
+    if(i>Rej.Bound){break}
+  }
+  return(q)
+}
+FIs = read.csv('/Users/fuyinghao/KNOT/example_data/Binary/original.RData', header = F)
+FIs = as.matrix(FIs)
+M = nrow(FIs)-1
+kappa <- apply(FIs, 2, function(x) {
+  if (all(x == 0)) {
+    return(1)
+  } else {
+    return(which.max(x) - 1)
+  }
+})
+tau <- apply(FIs, 2, function(i) max(i) - median(i[-which.max(i)]))
+W <- apply(FIs, 2, function(i) (i[1] - median(i[2:(M+1)])) * ifelse(i[1] >= max(i[2:(M+1)]), 1, 0))
+q = MK.q.byStat(kappa = kappa, tau = tau, M = nrow(FIs)-1)
+```R
+
+### **Step 5**: Identification of Interaction
+
+
+```R
+load("./example_data/Binary/original.RData")
+load("./example_data/Binary/y.RData")
+
+genotype_dat <- sim$dat[, q < 0.2] # FDR level = 0.2
+gene_closer <- 1:ncol(genotype_dat) # one gene per variant (simulation setting)
+
+res <- compute_shap_interaction_pvalues(
+  genotype_dat,
+  Y,
+  gene_closer,
+  N = 100,
+  cores = 10,
+  seed = 10
+)
+```
+
 ## Applications
 
 - **GWAS**: Identifies significant features using p-values.
@@ -155,22 +213,6 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
 - **Interaction Identification**: Permutation test based on SHAP interaction value.
 - **PRS**: Computes risk scores based on feature effect sizes.
 
-```R
-### Example: Interaction Identification
-# genotype_dat: matrix with rows as samples and columns as selected variants
-# y: phenotype labels
-# gene_closer: mapping of each variant to its gene
-# N: number of permutations
-
-res = compute_shap_interaction_pvalues(
-  genotype_dat,
-  y,
-  gene_closer,
-  N = 100,
-  cores = 10,
-  seed = 10
-)
-```
 
 ## Contact
 
