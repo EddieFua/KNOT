@@ -138,7 +138,7 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
 
 #### Arguments:
 
-- `--sample_size`: Number of samples.
+- `--sample_size`: Number of trios.
 - `--quan`: `True` for quantitative, `False` for classification.
 - `--data_path`: Directory with data files (e.g., `child_array.RData`, `dad_array.RData`, `mom_array.RData`, `weight.csv`, `y.RData`).
 
@@ -211,7 +211,7 @@ res <- compute_shap_interaction_pvalues(
 
 ## Applications
 
-- **genotype_dat**: Identifies significant features using p-values.
+- **GWAS**: Identifies significant features using p-values.
 - **Pathway Enrichment**: Maps features to biological pathways.
 - **Interaction Identification**: Permutation test based on SHAP interaction value.
 - **PRS**: Computes risk scores based on feature effect sizes.
