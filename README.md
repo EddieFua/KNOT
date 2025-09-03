@@ -142,12 +142,6 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
 - `--quan`: `True` for quantitative, `False` for classification.
 - `--data_path`: Directory with data files (e.g., `child_array.RData`, `dad_array.RData`, `mom_array.RData`, `weight.csv`, `y.RData`).
 
-#### Data Format:
-
-- **Genomic Data**: `.RData` files with shape `(num_samples, num_features, num_knockoffs)`.
-- **Weights**: `weight.csv` with shape `(num_knockoffs + 1, num_features)`.
-- **Labels**: Quantitative tasks use `y.RData` (continuous values); classification tasks generate binary tensors.
-
 #### Outputs:
 
 - `FI_nn_final_gradient.csv`: Gradient-based feature importance.
