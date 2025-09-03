@@ -174,7 +174,7 @@ kappa <- apply(FIs, 2, function(x) {
 })
 tau <- apply(FIs, 2, function(i) max(i) - median(i[-which.max(i)]))
 W <- apply(FIs, 2, function(i) (i[1] - median(i[2:(M+1)])) * ifelse(i[1] >= max(i[2:(M+1)]), 1, 0))
-q = MK.q.byStat(kappa = kappa, tau = tau, M = nrow(FIs)-1)
+q = MK.q.byStat(kappa = kappa, tau = tau, M = M)
 ```
 
 ### **Step 5**: Identification of Interaction
