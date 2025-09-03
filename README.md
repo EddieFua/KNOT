@@ -190,7 +190,7 @@ res <- compute_shap_interaction_pvalues(
   seed = 10
 )
 ```
-A 3n × p matrix for trio genotype data. 
+
 #### Arguments:
 - `--genotype`: 3n × p matrix for selected variants.
 - `--Y`: Phenotype vector of length 3n.
