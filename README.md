@@ -139,6 +139,7 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
 
 ### **Step 4**: Identification of Risk Variants
 Control FDR with the multi-knockoff procedure:
+
 ```R
 MK.q.byStat<-function (kappa,tau,M,Rej.Bound=10000){
   b<-order(tau,decreasing=T)
@@ -174,7 +175,7 @@ kappa <- apply(FIs, 2, function(x) {
 tau <- apply(FIs, 2, function(i) max(i) - median(i[-which.max(i)]))
 W <- apply(FIs, 2, function(i) (i[1] - median(i[2:(M+1)])) * ifelse(i[1] >= max(i[2:(M+1)]), 1, 0))
 q = MK.q.byStat(kappa = kappa, tau = tau, M = nrow(FIs)-1)
-```R
+```
 
 ### **Step 5**: Identification of Interaction
 
