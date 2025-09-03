@@ -162,7 +162,7 @@ MK.q.byStat<-function (kappa,tau,M,Rej.Bound=10000){
   }
   return(q)
 }
-FIs = read.csv('/Users/fuyinghao/KNOT/example_data/Binary/original.RData', header = F)
+FIs = read.csv('./example_data/Binary/original.RData', header = F)
 FIs = as.matrix(FIs)
 M = nrow(FIs)-1
 kappa <- apply(FIs, 2, function(x) {
