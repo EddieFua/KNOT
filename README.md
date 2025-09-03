@@ -142,7 +142,7 @@ Control FDR with the multi-knockoff procedure. Use `knockoff_filter.R` to comput
 ```R
 source('/Users/fuyinghao/KNOT/KNOT/knockoff_filter.R')
 FIs = read.csv('./example_data/Binary/FI_nn_final_shap.csv', header = F)
-q = MK.q.byStat (FIs, M = 10)
+q = MK.q.byStat(FIs, M = 10)
 ```
 
 ### **Step 5**: Identification of Interaction (Permutation Test)
