@@ -221,9 +221,7 @@ install.packages("SKAT")
 Use the provided `simulation_generation.R` to generate synthetic genotype-phenotype data:
 ```R
 source('./KNOT/simulation_generation.R')
-sim <- generate_sim_data(
-  effectsize = 0.9, quan=FALSE, n = 10000, p = 1000, para=1, maxld=0.7
-)
+sim <- generate_sim_data(effectsize = 0.9, quan=FALSE, n = 10000, p = 1000, para=1, maxld=0.7)
 ```
 #### Arguments:
 - `--effectsize`: Positive numeric value controlling the effect size of causal variants.
