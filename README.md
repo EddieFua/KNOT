@@ -188,7 +188,7 @@ res <- compute_shap_interaction_pvalues(
 #### Arguments:
 - `--genotype`: 3n × p matrix for selected variants.
 - `--y`: Phenotype vector of length 3n.
-- `--gene_closer`:  A vector of length p that annotates each selected variant with its corresponding gene name
+- `--gene_closer`:  A vector of length p that annotates each selected variant with its corresponding gene name.
 - `--N`:  Number of permutations.
 - `--seed`: Random seed.
 
@@ -203,13 +203,45 @@ res <- compute_shap_interaction_pvalues(
     Stores SHAP interaction values generated under permutation (null) for p-value computation.
 
 
-## Applications
+## Simulation Reproduction
 
-- **GWAS**: Identifies significant features using p-values.
-- **Pathway Enrichment**: Maps features to biological pathways.
-- **Interaction Identification**: Permutation test based on SHAP interaction value.
-- **PRS**: Computes polygenic risk scores based on feature importances.
+Due to data access restrictions for the **AGP** and **ASC** cohorts, we cannot provide the original simulation code used to generate the key figures in our manuscript.  
 
+Instead, we provide an additional simulation experiment using the **[SKAT](https://cran.r-project.org/package=SKAT)** public dataset. You can reproduce the results by installing the SKAT package and running our simulation script.
+
+---
+
+### 1. Install Dependencies
+
+```R
+install.packages("SKAT")
+```
+
+### 2. Run Simulation
+Use the provided `simulation_generation.R` to generate synthetic genotype-phenotype data:
+```R
+source('./KNOT/simulation_generation.R')
+sim <- generate_sim_data(
+  effectsize = 0.9, quan=FALSE, n = 10000, p = 1000, para=1,maxld=0.7
+)
+```
+#### Arguments:
+- `--effectsize`: Positive numeric value controlling the effect size of causal variants.
+- `--quan`: Logical indicator of trait type.
+- `--n`:  Number of trios.
+- `--p`:  Expected number of variants.
+- `--para`: Random seed.
+- `--maxld`: Numeric value in [0,1] controlling the correlation (LD) among variants.
+
+#### Outputs
+
+- `sim`: List of generated simulation data, including:
+  - `dat`: 3n × p matrix of trio genotype data, with n trios and p variants (ordered as father → mother → offspring).
+  - `dat.hap`: `6n × p matrix of phased haplotypes for each trio, ordered as father → mother → offspring.
+  - `pos`: p vector of genomic positions for all variants.
+  - `pos_causal`:  vector of positions of causal variants used in the simulation.
+  - `y`:  n vector of phenotypes.
+  - `phasing.dad/phasing.mom`: Indicates which haplotype was transmitted (1 or 2); if NULL, automatically inferred.
 
 ## Contact
 
