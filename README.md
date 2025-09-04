@@ -241,7 +241,7 @@ sim <- generate_sim_data(
   - `pos`: p vector of genomic positions for all variants.
   - `pos_causal`:  vector of positions of causal variants used in the simulation.
   - `y`:  n vector of phenotypes.
-  - `phasing.dad/phasing.mom`: Indicates which haplotype was transmitted (1 or 2); if NULL, automatically inferred.
+  - `phasing.dad/phasing.mom`: Indicates which haplotype was transmitted (1 or 2).
 
 ## Contact
 
