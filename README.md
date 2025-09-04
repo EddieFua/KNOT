@@ -222,7 +222,7 @@ Use the provided `simulation_generation.R` to generate synthetic genotype-phenot
 ```R
 source('./KNOT/simulation_generation.R')
 sim <- generate_sim_data(
-  effectsize = 0.9, quan=FALSE, n = 10000, p = 1000, para=1,maxld=0.7
+  effectsize = 0.9, quan=FALSE, n = 10000, p = 1000, para=1, maxld=0.7
 )
 ```
 #### Arguments:
