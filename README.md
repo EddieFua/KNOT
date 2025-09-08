@@ -203,6 +203,19 @@ res <- compute_shap_interaction_pvalues(
     Stores SHAP interaction values generated under permutation (null) for p-value computation.
 
 
+### **Step g**: PRS calculation
+We calculate the polygenic risk score (PRS) for each subject using the feature importance values of the selected variants.
+```R
+FIs = read.csv('./example_data/Binary/FI_nn_final_shap.csv', header = F)
+load("./example_data/Binary/original.RData")
+PRS <- sim$dat[, idx] %*% FIs[1, idx]
+prob <- exp(PRS) / (1 + exp(PRS))
+```
+#### Outputs
+- `PRS` is the polygenic risk score for each subject,
+- `prob` gives the probability of the binary trait based on the PRS.
+
+
 ## Simulation Reproduction
 
 Due to data access restrictions for the **AGP** and **ASC** cohorts, we cannot provide the original simulation code used to generate the key figures in our manuscript.  
