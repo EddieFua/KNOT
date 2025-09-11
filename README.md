@@ -203,7 +203,7 @@ res <- compute_shap_interaction_pvalues(
     Stores SHAP interaction values generated under permutation (null) for p-value computation.
 
 
-### **Step 5**: PRS calculation
+### **Step 5**: PRS Calculation
 We calculate the polygenic risk score (PRS) for each subject using the feature importance values of the selected variants.
 ```R
 FIs = read.csv('./example_data/Binary/FI_nn_final_shap.csv', header = F)
@@ -215,6 +215,38 @@ prob <- exp(PRS) / (1 + exp(PRS))
 - `PRS` is the polygenic risk score for each subject,
 - `prob` gives the probability of the binary trait based on the PRS.
 
+### **Step 6**: Pathway  Enrichment Analysis
+We performed pathway enrichment analysis to investigate the biological mechanisms associated with the variants identified at the target FDR threshold.
+···R
+source('./KNOT/pathway_enrichment_analysis.R')
+genes = unique(snp_data$gene.closer[which(snp_data$q<=0.15)])
+info <- AnnotationDbi::select(org.Hs.eg.db, keys=genes,
+                              columns=c("ENSEMBL"),
+                              keytype="SYMBOL")
+ens <- info$ENSEMBL
+names = AnnotationDbi::select(org.Hs.eg.db, keys=unique(snp_data$gene.closer),
+                              columns=c("ENSEMBL"),
+                              keytype="SYMBOL")
+df<-data.frame(name = names$ENSEMBL)
+res <- analyze(ens = na.omit(info$ENSEMBL), 
+               df = data.frame(name = na.omit(names$ENSEMBL)))
+```
+#### Arguments:
+- `--ens`: Gene names corresponding to variants identified at the target FDR level (0.15 in our example).
+- `--df `: Gene names corresponding to all variants in the dataset, used as the background set.
+
+#### Outputs
+- `res`: `data.frame· of GO pathway enrichment analysis results, including:
+- `--GOBPID`: GO term identifier.
+- `--Pvalue`: Raw hypergeometric test p-value.
+- `--OddsRatio`: Enrichment odds ratio.
+- `--ExpCount`: Expected number of genes under null.
+- `--Count`: Number of observed genes in the pathway.
+- `--Size`: Total size of the GO term gene set.
+- `--Term`: GO biological process description.
+- `--idx`: Entrez Gene IDs of selected genes contributing to enrichment.
+- `--symbol`: Gene symbols corresponding to idx.
+- `--p_adjusted`: Benjamini–Hochberg (BH) adjusted p-value across all tested pathways.
 
 ## Simulation Reproduction
 
