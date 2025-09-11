@@ -228,7 +228,7 @@ res <- analyze(ens = ens, df = df)
 - `--df `: A `data.frame` with a single column named name, containing ENSEMBL IDs of all genes in the dataset, used as the background set.
 
 #### Outputs
-- `res`: `data.frame· of GO pathway enrichment analysis results, including:
+- `res`: `data.frame` of GO pathway enrichment analysis results, including:
 - `--GOBPID`: GO term identifier.
 - `--Pvalue`: Raw hypergeometric test p-value.
 - `--OddsRatio`: Enrichment odds ratio.
