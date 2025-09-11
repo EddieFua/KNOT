@@ -220,22 +220,12 @@ prob <- exp(PRS) / (1 + exp(PRS))
 We performed pathway enrichment analysis to investigate the biological mechanisms associated with the variants identified at the target FDR threshold.
 ```R
 source('./KNOT/pathway_enrichment_analysis.R')
-genes = unique(snp_data$gene.closer[which(snp_data$q<=0.15)])
-info <- AnnotationDbi::select(org.Hs.eg.db, keys=genes,
-                              columns=c("ENSEMBL"),
-                              keytype="SYMBOL")
-ens <- info$ENSEMBL
-names = AnnotationDbi::select(org.Hs.eg.db, keys=unique(snp_data$gene.closer),
-                              columns=c("ENSEMBL"),
-                              keytype="SYMBOL")
-df<-data.frame(name = names$ENSEMBL)
-res <- analyze(ens = na.omit(info$ENSEMBL), 
-               df = data.frame(name = na.omit(names$ENSEMBL)))
+res <- analyze(ens = ens, df = df)
 ```
 
 #### Arguments:
-- `--ens`: Gene names corresponding to variants identified at the target FDR level (0.15 in our example).
-- `--df `: Gene names corresponding to all variants in the dataset, used as the background set.
+- `--ens`: ENSEMBL IDs of genes corresponding to variants identified at the target FDR level (0.15 in our example).
+- `--df `: A `data.frame` with a single column named name, containing ENSEMBL IDs of all genes in the dataset, used as the background set.
 
 #### Outputs
 - `res`: `data.frame· of GO pathway enrichment analysis results, including:
