@@ -22,7 +22,8 @@ This repository provides scripts for simulation data generation, model training,
 - `KNOT/permutation_test.R`: Function for permutation tests based on SHAP interaction values.  
 - `KNOT/get_knowledge.R`: Function for calculating FBAT-based prior knowledge.  
 - `KNOT/knockoff_filter.R`: Implements q-value computation for multi-knockoff FDR control.
-
+- `KNOT/pathway_enrichment_analysis.R`: Performs pathway enrichment analysis.
+- `KNOT/simulation_generation.R`: Generates simulation data based on the publicly available SKAT dataset.
 ---
 
 ## Installation
