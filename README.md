@@ -18,9 +18,9 @@ This repository provides scripts for simulation data generation, model training,
 - `KNOT/run.py`: Main script to execute experiments, handling data loading, model training, and feature importance computation using SHAP and gradients.  
 - `KNOT/callback_prediction_quan_combine.py`: Trainer class for quantitative tasks, implementing MSE loss, contrastive (distance) loss, L1 regularization, and R² validation.  
 - `KNOT/callback_prediction_combine.py`: Trainer class for classification tasks, using BCE loss, contrastive (distance) loss, L1 regularization, and ROC-AUC validation.  
-- `KNOT/generate_knockoff.R`: Functions for generating knockoffs.  
-- `KNOT/permutation_test.R`: Function for permutation tests based on SHAP interaction values.  
-- `KNOT/get_knowledge.R`: Function for calculating FBAT-based prior knowledge.  
+- `KNOT/generate_knockoff.R`: Generates knockoffs. 
+- `KNOT/permutation_test.R`: Performs permutation tests based on SHAP interaction values.
+- `KNOT/get_knowledge.R`: Computes FBAT-based prior knowledge. 
 - `KNOT/knockoff_filter.R`: Implements q-value computation for multi-knockoff FDR control.
 - `KNOT/pathway_enrichment_analysis.R`: Performs pathway enrichment analysis.
 - `KNOT/simulation_generation.R`: Generates simulation data based on the publicly available SKAT dataset.
