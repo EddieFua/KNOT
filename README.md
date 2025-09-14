@@ -241,11 +241,7 @@ res <- analyze(ens = ens, df = df)
 - `--symbol`: Gene symbols corresponding to idx.
 - `--p_adjusted`: Benjamini–Hochberg (BH) adjusted p-value across all tested pathways.
 
-## Simulation Reproduction
-
-Due to data access restrictions for the **AGP** and **ASC** cohorts, we cannot provide the original simulation code used to generate the key figures in our manuscript.  
-
-Instead, we provide an additional simulation experiment using the **[SKAT](https://cran.r-project.org/package=SKAT)** public dataset. You can reproduce the results by installing the SKAT package and running our simulation script.
+## Simulation Studies
 
 ---
 
