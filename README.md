@@ -245,8 +245,6 @@ prob <- exp(PRS) / (1 + exp(PRS))
 
 ## Simulation Reproduction
 
----
-
 ### 1. Install Dependencies
 
 ```R
