@@ -135,9 +135,9 @@ generate_sim_data<-function(effectsize, quan=FALSE, sigwin=5000,n = 10000, p = 1
       P1<-X[tmp[1],]+X[tmp[2],]
       P2<-X[tmp[3],]+X[tmp[4],]
       Y<-X[tmp[hap.dad],]+X[tmp[2+hap.mom],]
-      potential_p1 = (beta %*%P1[jth])**2+b0
-      potential_p2 = (beta %*%P2[jth])**2+b0
-      potential_Y = (beta %*%Y[jth])**2+b0
+      potential_p1 = (beta %*%P1[jth])**2
+      potential_p2 = (beta %*%P2[jth])**2
+      potential_Y = (beta %*%Y[jth])**2
       y_p1 <- exp(potential_p1)/(1+exp(potential_p1))
       y_p2 <- exp(potential_p2)/(1+exp(potential_p2))
       y_Y <- exp(potential_Y)/(1+exp(potential_Y))
