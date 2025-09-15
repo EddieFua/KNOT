@@ -148,7 +148,9 @@ python run.py --sample_size 3000 --quan False --data_path './example_data/Binary
 - `FI_nn_final_gradient.csv`: Gradient-based feature importance.
 - `FI_nn_final_shap.csv`: SHAP-based feature importance.
 
-### **Step 4**: Identification of Risk Variants
+## Applications
+
+### **Application 1**: Genome-Wide Association Studies
 Control FDR with the multi-knockoff procedure. Use `knockoff_filter.R` to compute q-values.
 ```R
 source('./KNOT/knockoff_filter.R')
@@ -166,7 +168,7 @@ sel_idx = which(q < target_fdr_level)  # indices of selected variants
 - `sel_idx`: Indices of variants passing FDR threshold.
 
 
-### **Step 5**: Identification of Interaction (Permutation Test)
+### **Application 2**: Interaction Identification
 Use the q-values from Step 4 (e.g., target FDR = 0.2) to select variants and test interactions with `permutation_test.R`
 In the simulation setting, assume one variant corresponds to one gene.
 
@@ -203,21 +205,7 @@ res <- compute_shap_interaction_pvalues(
   - `null_raw_array`: 3D array `[3n × p × p]` of null SHAP interaction values  
     Stores SHAP interaction values generated under permutation (null) for p-value computation.
 
-
-### **Step 5**: PRS Calculation
-We calculate the polygenic risk score (PRS) for each subject using the feature importance values of the selected variants.
-```R
-FIs = read.csv('./example_data/Binary/FI_nn_final_shap.csv', header = F)
-load("./example_data/Binary/original.RData")
-PRS <- sim$dat[, idx] %*% FIs[1, idx]
-prob <- exp(PRS) / (1 + exp(PRS))
-```
-
-#### Outputs
-- `PRS` is the polygenic risk score for each subject,
-- `prob` gives the probability of the binary trait based on the PRS.
-
-### **Step 6**: Pathway  Enrichment Analysis
+### **Application 3**: Pathway  Enrichment Analysis
 We performed pathway enrichment analysis to investigate the biological mechanisms associated with the variants identified at the target FDR threshold.
 ```R
 source('./KNOT/pathway_enrichment_analysis.R')
@@ -241,7 +229,25 @@ res <- analyze(ens = ens, df = df)
 - `--symbol`: Gene symbols corresponding to idx.
 - `--p_adjusted`: Benjamini–Hochberg (BH) adjusted p-value across all tested pathways.
 
-## Simulation Studies
+### **Application 4**: Polygenic Risk Scores
+We calculate the polygenic risk score (PRS) for each subject using the feature importance values of the selected variants.
+```R
+FIs = read.csv('./example_data/Binary/FI_nn_final_shap.csv', header = F)
+load("./example_data/Binary/original.RData")
+PRS <- sim$dat[, idx] %*% FIs[1, idx]
+prob <- exp(PRS) / (1 + exp(PRS))
+```
+
+#### Outputs
+- `PRS` is the polygenic risk score for each subject,
+- `prob` gives the probability of the binary trait based on the PRS.
+
+
+## Simulation Reproduction
+
+Due to data access restrictions for the **AGP** and **ASC** cohorts, we cannot provide the original simulation code used to generate the key figures in our manuscript.  
+
+Instead, we provide an additional simulation experiment using the **[SKAT](https://cran.r-project.org/package=SKAT)** public dataset. You can reproduce the results by installing the SKAT package and running our simulation script.
 
 ---
 
@@ -278,3 +284,4 @@ sim <- generate_sim_data(effectsize = 0.9, quan=FALSE, n = 10000, p = 1000, para
 ## Contact
 
 For questions, open an issue on GitHub or [email](yinghao.fu@my.cityu.edu.hk), or visit my [personal homepage](https://eddiefua.github.io/).
+
