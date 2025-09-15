@@ -2,7 +2,7 @@
 
 **KNOT** (**K**nockoff-augmented **N**eural network **o**n **T**rio data) is designed for stabilized variable selection with false discovery rate (FDR) control in family-based genome-wide association studies (GWAS).
 
-This repository provides scripts for simulation data generation, model training, feature importance computation, identification of variants, identification of interactions, and PRS calculation.
+This repository provides scripts for simulation data generation, model training, feature importance computation, identification of variants, identification of interactions, pathway enrichment analysis, and PRS calculation.
 
 ![Pipeline](figure/framework.jpg)
 
