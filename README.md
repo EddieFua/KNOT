@@ -243,38 +243,6 @@ prob <- exp(PRS) / (1 + exp(PRS))
 - `prob` gives the probability of the binary trait based on the PRS.
 
 
-## Simulation Reproduction
-
-### 1. Install Dependencies
-
-```R
-install.packages("SKAT")
-```
-
-### 2. Run Simulation
-Use the provided `simulation_generation.R` to generate synthetic genotype-phenotype data:
-```R
-source('./KNOT/simulation_generation.R')
-sim <- generate_sim_data(effectsize = 0.9, quan=FALSE, n = 10000, p = 1000, para=1, maxld=0.7)
-```
-#### Arguments:
-- `--effectsize`: Positive numeric value controlling the effect size of causal variants.
-- `--quan`: Logical indicator of trait type.
-- `--n`:  Number of trios.
-- `--p`:  Expected number of variants.
-- `--para`: Random seed.
-- `--maxld`: Numeric value in [0,1] controlling the correlation (LD) among variants.
-
-#### Outputs
-
-- `sim`: List of generated simulation data, including:
-  - `dat`: 3n × p matrix of trio genotype data, with n trios and p variants (ordered as father → mother → offspring).
-  - `dat.hap`: `6n × p matrix of phased haplotypes for each trio, ordered as father → mother → offspring.
-  - `pos`: p vector of genomic positions for all variants.
-  - `pos_causal`:  vector of positions of causal variants used in the simulation.
-  - `y`:  n vector of phenotypes.
-  - `phasing.dad/phasing.mom`: Indicates which haplotype was transmitted (1 or 2).
-
 ## Contact
 
 For questions, open an issue on GitHub or [email](yinghao.fu@my.cityu.edu.hk), or visit my [personal homepage](https://eddiefua.github.io/).
