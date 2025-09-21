@@ -1,4 +1,4 @@
-# Knockoff-Augmented Neural Networks for Identifying Risk Variants in Family-Based Association Studies
+# Knockoff-Augmented Neural Networks for Identifying Risk Variants and Epistatic Interactions in Family-Based Association Studies
 
 **KNOT** (**K**nockoff-augmented **N**eural network **o**n **T**rio data) is designed for stabilized variable selection with false discovery rate (FDR) control in family-based genome-wide association studies (GWAS).
 
