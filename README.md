@@ -23,7 +23,6 @@ This repository provides scripts for knockoff generation, model training, featur
 - `KNOT/get_knowledge.R`: Computes FBAT-based prior knowledge. 
 - `KNOT/knockoff_filter.R`: Implements q-value computation for multi-knockoff FDR control.
 - `KNOT/pathway_enrichment_analysis.R`: Performs pathway enrichment analysis.
-- `KNOT/simulation_generation.R`: Generates simulation data based on the publicly available SKAT dataset.
 ---
 
 ## Installation
