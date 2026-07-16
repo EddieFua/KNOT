@@ -241,6 +241,8 @@ prob <- exp(PRS) / (1 + exp(PRS))
 - `PRS` is the polygenic risk score for each subject,
 - `prob` gives the probability of the binary trait based on the PRS.
 
+## Contact
+This project is released under the MIT License.
 
 ## Contact
 
