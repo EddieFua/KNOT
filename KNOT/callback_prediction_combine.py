@@ -42,8 +42,8 @@ class TrainerWithCallback:
                 combined_tensor = torch.cat((mean_tensor, child_tensor), dim=0).to(self.device)
                 self.model.return_y_only = True
                 output = self.model(combined_tensor)
-                preds_list.append((output >= 0.5).float().cpu().numpy())
-                labels_list.append(torch.cat((Y_batch[:, 0:1], Y_batch[:, 2:3]), dim=0).cpu().numpy())
+                preds_list.append(output.cpu().numpy().reshape(-1))
+                labels_list.append(torch.cat((Y_batch[:, 0:1], Y_batch[:, 2:3]), dim=0).cpu().numpy().reshape(-1))
         val_score = roc_auc_score(np.concatenate(labels_list), np.concatenate(preds_list))
 
         all_data = torch.cat([X_b for X_b, _ in train_loader] + [X_b for X_b, _ in val_loader], dim=0)
